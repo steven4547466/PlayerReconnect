@@ -79,7 +79,7 @@ namespace PlayerReconnect
 			});
 		}
 
-		public static void Left(NetworkConnection conn)
+		public static void Left(NetworkConnection conn, bool respawned = false)
 		{
 			if (conn.identity == null || conn.identity.gameObject == null)
 				return;
@@ -89,11 +89,14 @@ namespace PlayerReconnect
 			if (player == null || player.IsHost)
 				return;
 
-			var ev = new LeftEventArgs(player);
+			if (!respawned)
+			{
+				var ev = new LeftEventArgs(player);
 
-			Log.SendRaw($"Player {ev.Player.Nickname} ({ev.Player.UserId}) ({player?.Id}) disconnected", ConsoleColor.Green);
+				Log.SendRaw($"Player {ev.Player.Nickname} ({ev.Player.UserId}) ({player?.Id}) disconnected", ConsoleColor.Green);
 
-			Exiled.Events.Handlers.Player.OnLeft(ev);
+				Exiled.Events.Handlers.Player.OnLeft(ev);
+			}
 
 			Player.IdsCache.Remove(player.Id);
 			Player.UserIdsCache.Remove(player.UserId);

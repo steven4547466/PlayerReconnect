@@ -31,7 +31,8 @@ namespace PlayerReconnect
 			base.OnEnabled();
             Instance = this;
 			Events.DisabledPatchesHashSet.Add(typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect)));
-            Events.Instance.ReloadDisabledPatches();
+			Events.DisabledPatchesHashSet.Add(typeof(CharacterClassManager).GetMethod(nameof(CharacterClassManager.NetworkIsVerified)));
+			Events.Instance.ReloadDisabledPatches();
 			RegisterEvents();
 
 			HarmonyInstance = new Harmony($"steven4547466.playerreconnect-{++harmonyPatches}");
@@ -50,14 +51,12 @@ namespace PlayerReconnect
 		{
 			player = new Handlers.Player();
 			server = new Handlers.Server();
-			Exiled.Events.Handlers.Player.Joined += player.OnJoined;
 			Exiled.Events.Handlers.Player.Hurting += player.OnHurting;
 			Exiled.Events.Handlers.Server.RestartingRound += server.OnRestartingRound;
 		}
 
 		public void UnregisterEvents()
 		{
-			Exiled.Events.Handlers.Player.Joined -= player.OnJoined;
 			Exiled.Events.Handlers.Player.Hurting -= player.OnHurting;
 			Exiled.Events.Handlers.Server.RestartingRound -= server.OnRestartingRound;
 			player = null;

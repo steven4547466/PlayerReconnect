@@ -13,26 +13,6 @@ namespace PlayerReconnect.Handlers
 {
 	public class Player
 	{
-		public void OnJoined(JoinedEventArgs ev)
-		{
-			if (TrackingAndMethods.DisconnectedPlayers.ContainsKey(ev.Player.UserId))
-			{
-				var tuple = TrackingAndMethods.DisconnectedPlayers[ev.Player.UserId];
-				tuple.Item1.Player.ClearInventory();
-				tuple.Item1.Respawned = true;
-				TrackingAndMethods.Left(tuple.Item3);
-				TrackingAndMethods.Dispose(tuple.Item2, tuple.Item3);
-			}
-
-			if (TrackingAndMethods.Coroutines.ContainsKey(ev.Player.UserId))
-			{
-				foreach(CoroutineHandle coroutine in TrackingAndMethods.Coroutines[ev.Player.UserId])
-					Timing.KillCoroutines(coroutine);
-				TrackingAndMethods.Coroutines.Remove(ev.Player.UserId);
-			}
-			TrackingAndMethods.RespawnPlayer(ev.Player);
-		}
-
 		public void OnHurting(HurtingEventArgs ev)
 		{
 			if (TrackingAndMethods.DisconnectedPlayers.ContainsKey(ev.Target.UserId))
@@ -53,8 +33,6 @@ namespace PlayerReconnect.Handlers
 				{
 					playerStats.Health -= ev.Amount;
 				}
-
-				Log.Info(playerStats.Health);
 
 				if (playerStats.Health <= 1f)
 				{
