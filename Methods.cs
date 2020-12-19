@@ -20,9 +20,15 @@ namespace PlayerReconnect
 			if (!DisconnectedPlayers.ContainsKey(player.UserId)) return;
 			ReconnectData savedPlayer = DisconnectedPlayers[player.UserId].Item1;
 			PlayerStats playerStats = DisconnectedPlayers[player.UserId].Item1.PlayerStats;
-			if (playerStats.Health <= 0) return;
+			if (!savedPlayer.Alive || playerStats.Health <= 0)
+			{
+				DisconnectedPlayers.Remove(player.UserId);
+				return;
+			}
+			Log.Info("Respawned");
 			Timing.CallDelayed(0.5f, () => 
 			{
+				Log.Info("Spawning as " + savedPlayer.Role);
 				player.SetRole(savedPlayer.Role);
 				Timing.CallDelayed(1f, () =>
 				{
@@ -42,7 +48,16 @@ namespace PlayerReconnect
 						player.Position = savedPlayer.Position;
 						player.Rotation = savedPlayer.Rotation;
 						player.Rotations = savedPlayer.Rotations;
-						if (savedPlayer.Camera != null) player.Camera = savedPlayer.Camera;
+						if (savedPlayer.Role == RoleType.Scp079)
+						{
+							Scp079PlayerScript script = player.ReferenceHub.GetComponent<Scp079PlayerScript>();
+							player.Camera = savedPlayer.Camera;
+							script.ForceLevel(savedPlayer.Scp079PlayerScript.Lvl, false);
+							script.Exp = savedPlayer.Scp079PlayerScript.Exp;
+							script.NetworkmaxMana = savedPlayer.Scp079PlayerScript.NetworkmaxMana;
+							script.Mana = savedPlayer.Scp079PlayerScript.Mana;
+							//script.lockedDoors = savedPlayer.Scp079PlayerScript.lockedDoors;
+						}
 
 						player.MaxHealth = playerStats.maxHP;
 						player.MaxAdrenalineHealth = playerStats.maxArtificialHealth;

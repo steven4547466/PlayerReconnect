@@ -21,6 +21,7 @@ namespace PlayerReconnect
 		public Vector3 Rotation;
 		public Vector2 Rotations;
 		public Camera079 Camera;
+		public Scp079PlayerScript Scp079PlayerScript;
 		public string DisplayNickname;
 		public int CufferId;
 		public string CustomPlayerInfo;
@@ -60,6 +61,9 @@ namespace PlayerReconnect
 			Rotation = player.Rotation;
 			Rotations = player.Rotations;
 			Camera = player.Camera;
+			Scp079PlayerScript = player.ReferenceHub.GetComponent<Scp079PlayerScript>();
+			Scp079PlayerScript.NetworkcurSpeaker = null;
+			Scp079PlayerScript.Speaker = null;
 			DisplayNickname = player.DisplayNickname;
 			CufferId = player.CufferId;
 			CustomPlayerInfo = player.CustomPlayerInfo;

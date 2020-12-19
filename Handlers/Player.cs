@@ -54,15 +54,23 @@ namespace PlayerReconnect.Handlers
 					playerStats.Health -= ev.Amount;
 				}
 
-				if (playerStats.Health <= 0)
+				Log.Info(playerStats.Health);
+
+				if (playerStats.Health <= 1f)
 				{
 					TrackingAndMethods.DisconnectedPlayers[ev.Target.UserId].Item1.Alive = false;
 					TrackingAndMethods.DisconnectedPlayers[ev.Target.UserId].Item1.Player.DropItems();
-					ev.Target.ReferenceHub.GetComponent<RagdollManager>().SpawnRagdoll(ev.Target.GameObject.transform.position, ev.Target.GameObject.transform.rotation,
-						(ev.Target.ReferenceHub.playerMovementSync == null) ? Vector3.zero : ev.Target.ReferenceHub.playerMovementSync.PlayerVelocity,
-						(int)ev.Target.ReferenceHub.characterClassManager.CurClass, ev.HitInformations, ev.Target.ReferenceHub.characterClassManager.CurRole.team > Team.SCP,
-						ev.Target.GameObject.GetComponent<Dissonance.Integrations.MirrorIgnorance.MirrorIgnorancePlayer>().PlayerId,
-						ev.Target.ReferenceHub.nicknameSync.DisplayName, ev.Target.ReferenceHub.queryProcessor.PlayerId);
+
+					if (ev.Target.ReferenceHub.characterClassManager.Classes.CheckBounds(ev.Target.Role) &&
+						(!playerStats._pocketCleanup || ev.DamageType != DamageTypes.Pocket) && ev.DamageType != DamageTypes.RagdollLess)
+					{
+						ev.Target.ReferenceHub.GetComponent<RagdollManager>().SpawnRagdoll(ev.Target.GameObject.transform.position, ev.Target.GameObject.transform.rotation,
+							(ev.Target.ReferenceHub.playerMovementSync == null) ? Vector3.zero : ev.Target.ReferenceHub.playerMovementSync.PlayerVelocity,
+							(int)ev.Target.ReferenceHub.characterClassManager.CurClass, ev.HitInformations, ev.Target.ReferenceHub.characterClassManager.CurRole.team > Team.SCP,
+							ev.Target.GameObject.GetComponent<Dissonance.Integrations.MirrorIgnorance.MirrorIgnorancePlayer>().PlayerId,
+							ev.Target.ReferenceHub.nicknameSync.DisplayName, ev.Target.ReferenceHub.queryProcessor.PlayerId);
+					}
+
 					TrackingAndMethods.DisconnectedPlayers[ev.Target.UserId].Item1.Player.Role = RoleType.Spectator;
 				}
 			}
