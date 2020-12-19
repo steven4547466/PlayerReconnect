@@ -40,15 +40,12 @@ namespace PlayerReconnect.Patches
 					{
 						if (!TrackingAndMethods.DisconnectedPlayers.ContainsKey(savedPlayer.UserId))
 							return;
-						TrackingAndMethods.DisconnectedPlayers.Remove(savedPlayer.UserId);
 						TrackingAndMethods.Left(conn);
 						TrackingAndMethods.Dispose(__instance, conn);
 					}
 					catch (Exception e)
 					{
 						Log.Error($"Server disconnect patch issue: {e}");
-						if (TrackingAndMethods.DisconnectedPlayers.ContainsKey(savedPlayer.UserId))
-							TrackingAndMethods.DisconnectedPlayers.Remove(savedPlayer.UserId);
 						TrackingAndMethods.Dispose(__instance, conn);
 					}
 				}),

@@ -50,18 +50,14 @@ namespace PlayerReconnect
 		{
 			player = new Handlers.Player();
 			server = new Handlers.Server();
-			//Exiled.Events.Handlers.Player.PreAuthenticating += player.OnPreAuthenticating;
 			Exiled.Events.Handlers.Player.Joined += player.OnJoined;
-			Exiled.Events.Handlers.Player.SpawningRagdoll += player.OnSpawningRagdoll;
 			Exiled.Events.Handlers.Player.Hurting += player.OnHurting;
 			Exiled.Events.Handlers.Server.RestartingRound += server.OnRestartingRound;
 		}
 
 		public void UnregisterEvents()
 		{
-			//Exiled.Events.Handlers.Player.PreAuthenticating -= player.OnPreAuthenticating;
 			Exiled.Events.Handlers.Player.Joined -= player.OnJoined;
-			Exiled.Events.Handlers.Player.SpawningRagdoll -= player.OnSpawningRagdoll;
 			Exiled.Events.Handlers.Player.Hurting -= player.OnHurting;
 			Exiled.Events.Handlers.Server.RestartingRound -= server.OnRestartingRound;
 			player = null;

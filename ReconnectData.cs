@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace PlayerReconnect
 {
+	// IT DOESNT TRY TO SPAWN RAGDOLL BECAUSE STATS IS NEW AND NOT LINKED TO IT!!!
 	public class ReconnectData
 	{
 		public Player Player;
@@ -25,6 +26,8 @@ namespace PlayerReconnect
 		public string CustomPlayerInfo;
 		public Dictionary<AmmoType, uint> Ammo;
 		public string DissonanceId;
+		public bool Alive = true;
+		public bool Respawned = false;
 
 		public ReconnectData(Player player)
 		{
@@ -64,7 +67,6 @@ namespace PlayerReconnect
 			foreach(AmmoType ammo in Enum.GetValues(typeof(AmmoType)))
 			{
 				Ammo.Add(ammo, player.Ammo[(int)ammo]);
-				Log.Info(ammo + " " + player.Ammo[(int)ammo]);
 			}
 			DissonanceId = player.GameObject.GetComponent<Dissonance.Integrations.MirrorIgnorance.MirrorIgnorancePlayer>().PlayerId;
 		}

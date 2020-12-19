@@ -21,16 +21,15 @@ namespace PlayerReconnect
 			ReconnectData savedPlayer = DisconnectedPlayers[player.UserId].Item1;
 			PlayerStats playerStats = DisconnectedPlayers[player.UserId].Item1.PlayerStats;
 			if (playerStats.Health <= 0) return;
-			Timing.CallDelayed(0.1f, () => 
+			Timing.CallDelayed(0.5f, () => 
 			{
 				player.SetRole(savedPlayer.Role);
-				player.ClearInventory();
 				Timing.CallDelayed(1f, () =>
 				{
 					try
 					{
-
-						foreach(KeyValuePair<AmmoType, uint> ammoPair in savedPlayer.Ammo)
+						player.ClearInventory();
+						foreach (KeyValuePair<AmmoType, uint> ammoPair in savedPlayer.Ammo)
 						{
 							player.Ammo[(int)ammoPair.Key] = ammoPair.Value;
 						}
@@ -39,15 +38,7 @@ namespace PlayerReconnect
 						{
 							Inventory.SyncItemInfo syncItemInfo = savedPlayer.Inventory[i];
 							player.AddItem(syncItemInfo);
-							Log.Info(player.CurrentItemIndex);
-							if (savedPlayer.CurItemIndex == i)
-							{
-								Log.Info("Current item set: " + i);
-								player.CurrentItem = syncItemInfo;
-							}
-							Log.Info("Item index after: " + player.CurrentItemIndex);
 						}
-
 						player.Position = savedPlayer.Position;
 						player.Rotation = savedPlayer.Rotation;
 						player.Rotations = savedPlayer.Rotations;
@@ -101,7 +92,25 @@ namespace PlayerReconnect
 				NetworkIdentity identity = conn.identity;
 				if (identity != null)
 				{
-					identity.GetComponent<PlayerStats>().HurtPlayer(new PlayerStats.HitInfo(-1f, "DISCONNECT", DamageTypes.Wall, 0), conn.identity.gameObject, true);
+					PlayerStats.HitInfo info = new PlayerStats.HitInfo(-1f, "DISCONNECT", DamageTypes.Wall, 0);
+					identity.GetComponent<PlayerStats>().HurtPlayer(info, conn.identity.gameObject, true);
+					GameObject go = identity.gameObject;
+					if (go == null) return;
+					ReferenceHub referenceHub = ReferenceHub.GetHub(go);
+					PlayerMovementSync playerMovementSync = referenceHub.playerMovementSync;
+					CharacterClassManager ccm = referenceHub.characterClassManager;
+					if (DisconnectedPlayers.ContainsKey(ccm.UserId) && !DisconnectedPlayers[ccm.UserId].Item1.Respawned)
+					{
+						DisconnectedPlayers[ccm.UserId].Item1.Player.DropItems();
+						go.GetComponent<RagdollManager>().SpawnRagdoll(go.transform.position, go.transform.rotation,
+							(playerMovementSync == null) ? Vector3.zero : playerMovementSync.PlayerVelocity, (int)ccm.CurClass,
+							info, ccm.CurRole.team > Team.SCP, go.GetComponent<Dissonance.Integrations.MirrorIgnorance.MirrorIgnorancePlayer>().PlayerId,
+							referenceHub.nicknameSync.DisplayName, referenceHub.queryProcessor.PlayerId);
+					}
+					Timing.CallDelayed(0.5f, () =>
+					{
+						if (DisconnectedPlayers.ContainsKey(ccm.UserId)) DisconnectedPlayers.Remove(ccm.UserId);
+					});
 				}
 			}
 			NetworkServer.DestroyPlayerForConnection(conn);

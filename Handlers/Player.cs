@@ -19,6 +19,7 @@ namespace PlayerReconnect.Handlers
 			{
 				var tuple = TrackingAndMethods.DisconnectedPlayers[ev.Player.UserId];
 				tuple.Item1.Player.ClearInventory();
+				tuple.Item1.Respawned = true;
 				TrackingAndMethods.Left(tuple.Item3);
 				TrackingAndMethods.Dispose(tuple.Item2, tuple.Item3);
 			}
@@ -30,11 +31,6 @@ namespace PlayerReconnect.Handlers
 				TrackingAndMethods.Coroutines.Remove(ev.Player.UserId);
 			}
 			TrackingAndMethods.RespawnPlayer(ev.Player);
-		}
-
-		public void OnSpawningRagdoll(SpawningRagdollEventArgs ev)
-		{
-			if (TrackingAndMethods.DisconnectedPlayers.Any(p => p.Value.Item1.DissonanceId == ev.DissonanceId)) ev.IsAllowed = false;
 		}
 
 		public void OnHurting(HurtingEventArgs ev)
@@ -58,6 +54,17 @@ namespace PlayerReconnect.Handlers
 					playerStats.Health -= ev.Amount;
 				}
 
+				if (playerStats.Health <= 0)
+				{
+					TrackingAndMethods.DisconnectedPlayers[ev.Target.UserId].Item1.Alive = false;
+					TrackingAndMethods.DisconnectedPlayers[ev.Target.UserId].Item1.Player.DropItems();
+					ev.Target.ReferenceHub.GetComponent<RagdollManager>().SpawnRagdoll(ev.Target.GameObject.transform.position, ev.Target.GameObject.transform.rotation,
+						(ev.Target.ReferenceHub.playerMovementSync == null) ? Vector3.zero : ev.Target.ReferenceHub.playerMovementSync.PlayerVelocity,
+						(int)ev.Target.ReferenceHub.characterClassManager.CurClass, ev.HitInformations, ev.Target.ReferenceHub.characterClassManager.CurRole.team > Team.SCP,
+						ev.Target.GameObject.GetComponent<Dissonance.Integrations.MirrorIgnorance.MirrorIgnorancePlayer>().PlayerId,
+						ev.Target.ReferenceHub.nicknameSync.DisplayName, ev.Target.ReferenceHub.queryProcessor.PlayerId);
+					TrackingAndMethods.DisconnectedPlayers[ev.Target.UserId].Item1.Player.Role = RoleType.Spectator;
+				}
 			}
 		}
 	}
