@@ -53,16 +53,16 @@ namespace PlayerReconnect
 							Scp079PlayerScript script = player.ReferenceHub.GetComponent<Scp079PlayerScript>();
 							player.Camera = savedPlayer.Camera;
 							script.ForceLevel(savedPlayer.Scp079PlayerScript.Lvl, false);
-							script.Exp = savedPlayer.Scp079PlayerScript.Exp;
+							script.NetworkcurExp = savedPlayer.Scp079PlayerScript.NetworkcurExp;
 							script.NetworkmaxMana = savedPlayer.Scp079PlayerScript.NetworkmaxMana;
-							script.Mana = savedPlayer.Scp079PlayerScript.Mana;
+							script.NetworkcurMana = savedPlayer.Scp079PlayerScript.NetworkcurMana;
 							//script.lockedDoors = savedPlayer.Scp079PlayerScript.lockedDoors;
 						}
 
 						player.MaxHealth = playerStats.maxHP;
 						player.MaxAdrenalineHealth = playerStats.maxArtificialHealth;
 						player.Health = playerStats.Health;
-						player.AdrenalineHealth = playerStats.syncArtificialHealth;
+						player.AdrenalineHealth = playerStats.unsyncedArtificialHealth;
 
 						if (savedPlayer.DisplayNickname != null) player.DisplayNickname = savedPlayer.DisplayNickname;
 						if (!string.IsNullOrEmpty(savedPlayer.CustomPlayerInfo)) player.CustomPlayerInfo = savedPlayer.CustomPlayerInfo;
