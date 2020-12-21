@@ -38,8 +38,10 @@ namespace PlayerReconnect.Patches
 
 				if (player != null)
 				{
+					bool willRespawn = false;
 					if (TrackingAndMethods.DisconnectedPlayers.ContainsKey(player.UserId))
 					{
+						willRespawn = true;
 						var tuple = TrackingAndMethods.DisconnectedPlayers[player.UserId];
 						tuple.Item1.Player.ClearInventory();
 						tuple.Item1.Respawned = true;
@@ -54,7 +56,7 @@ namespace PlayerReconnect.Patches
 						TrackingAndMethods.Coroutines.Remove(player.UserId);
 					}
 					TrackingAndMethods.RespawnPlayer(player);
-					return;
+					if (willRespawn) return;
 				}
 
 				var ev = new JoinedEventArgs(Exiled.API.Features.Player.Get(__instance.gameObject));
