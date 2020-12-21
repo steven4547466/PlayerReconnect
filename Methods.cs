@@ -26,7 +26,7 @@ namespace PlayerReconnect
 				return;
 			}
 			Log.Info("Respawned");
-			Timing.CallDelayed(0.5f, () => 
+			Timing.CallDelayed(0.5f, () =>
 			{
 				Log.Info("Spawning as " + savedPlayer.Role);
 				player.SetRole(savedPlayer.Role);
@@ -143,7 +143,7 @@ namespace PlayerReconnect
 
 		public static IEnumerator<float> AhpDecay(PlayerStats playerStats)
 		{
-			while(playerStats.syncArtificialHealth > 0)
+			while (playerStats.syncArtificialHealth > 0)
 			{
 				yield return Timing.WaitForSeconds(1f);
 				playerStats.syncArtificialHealth -= playerStats.artificialHpDecay;

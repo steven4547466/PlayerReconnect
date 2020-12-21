@@ -29,7 +29,7 @@ namespace PlayerReconnect.Patches
 				PlayerManager.RemovePlayer(conn.identity.gameObject);
 				UnityEngine.Object.DestroyImmediate(conn.identity.gameObject.GetComponent<PlayerPositionManager>());
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Log.Error(e);
 			}

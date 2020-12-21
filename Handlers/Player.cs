@@ -29,7 +29,8 @@ namespace PlayerReconnect.Handlers
 						playerStats.syncArtificialHealth = 0f;
 					}
 					playerStats.Health -= amount;
-				} else
+				}
+				else
 				{
 					playerStats.Health -= ev.Amount;
 				}

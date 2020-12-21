@@ -46,14 +46,18 @@ namespace PlayerReconnect
 			PlayerStats.maxArtificialHealth = maxAhp;
 			PlayerStats.Health = hp;
 			PlayerStats.syncArtificialHealth = ahp;
-				
+
 			Inventory = new List<Inventory.SyncItemInfo>();
 			foreach (Inventory.SyncItemInfo syncItemInfo in player.Inventory.items)
 			{
-				Inventory.Add(new Inventory.SyncItemInfo 
-				{ 
-					id=syncItemInfo.id, durability=syncItemInfo.durability, modBarrel=syncItemInfo.modBarrel, 
-					modOther=syncItemInfo.modOther, modSight=syncItemInfo.modSight, uniq=syncItemInfo.uniq
+				Inventory.Add(new Inventory.SyncItemInfo
+				{
+					id = syncItemInfo.id,
+					durability = syncItemInfo.durability,
+					modBarrel = syncItemInfo.modBarrel,
+					modOther = syncItemInfo.modOther,
+					modSight = syncItemInfo.modSight,
+					uniq = syncItemInfo.uniq
 				});
 			}
 			CurItemIndex = player.CurrentItemIndex;
@@ -68,7 +72,7 @@ namespace PlayerReconnect
 			CufferId = player.CufferId;
 			CustomPlayerInfo = player.CustomPlayerInfo;
 			Ammo = new Dictionary<AmmoType, uint>();
-			foreach(AmmoType ammo in Enum.GetValues(typeof(AmmoType)))
+			foreach (AmmoType ammo in Enum.GetValues(typeof(AmmoType)))
 			{
 				Ammo.Add(ammo, player.Ammo[(int)ammo]);
 			}

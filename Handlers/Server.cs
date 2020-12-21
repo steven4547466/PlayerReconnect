@@ -13,9 +13,9 @@ namespace PlayerReconnect.Handlers
 		public void OnRestartingRound()
 		{
 			TrackingAndMethods.DisconnectedPlayers.Clear();
-			foreach (List<CoroutineHandle> coroutines in TrackingAndMethods.Coroutines.Values) 
-			{ 
-				foreach(CoroutineHandle coroutine in coroutines)
+			foreach (List<CoroutineHandle> coroutines in TrackingAndMethods.Coroutines.Values)
+			{
+				foreach (CoroutineHandle coroutine in coroutines)
 					Timing.KillCoroutines(coroutine);
 			}
 			TrackingAndMethods.Coroutines.Clear();

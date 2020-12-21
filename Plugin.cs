@@ -10,42 +10,42 @@ using HarmonyLib;
 
 namespace PlayerReconnect
 {
-    public class Plugin : Plugin<Config>
-    {
-        public static Plugin Instance;
+	public class Plugin : Plugin<Config>
+	{
+		public static Plugin Instance;
 
-        public override string Name { get; } = "PlayerReconnect";
-        public override string Author { get; } = "Steven4547466";
-        public override Version Version { get; } = new Version(1, 0, 0);
-        public override Version RequiredExiledVersion { get; } = new Version(2, 1, 19);
-        public override string Prefix { get; } = "PlayerReconnect";
+		public override string Name { get; } = "PlayerReconnect";
+		public override string Author { get; } = "Steven4547466";
+		public override Version Version { get; } = new Version(1, 0, 0);
+		public override Version RequiredExiledVersion { get; } = new Version(2, 1, 19);
+		public override string Prefix { get; } = "PlayerReconnect";
 
 		public Handlers.Player player { get; set; }
 		public Handlers.Server server { get; set; }
 
 		private int harmonyPatches = 0;
-        private Harmony HarmonyInstance { get; set; }
+		private Harmony HarmonyInstance { get; set; }
 
-        public override void OnEnabled()
+		public override void OnEnabled()
 		{
 			base.OnEnabled();
-            Instance = this;
+			Instance = this;
 			Events.DisabledPatchesHashSet.Add(typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect)));
 			Events.DisabledPatchesHashSet.Add(typeof(CharacterClassManager).GetMethod(nameof(CharacterClassManager.NetworkIsVerified)));
 			Events.Instance.ReloadDisabledPatches();
 			RegisterEvents();
 
 			HarmonyInstance = new Harmony($"steven4547466.playerreconnect-{++harmonyPatches}");
-            HarmonyInstance.PatchAll();
-        }
+			HarmonyInstance.PatchAll();
+		}
 
 		public override void OnDisabled()
 		{
 			base.OnDisabled();
-            Instance = null;
+			Instance = null;
 			UnregisterEvents();
 			HarmonyInstance.UnpatchAll();
-        }
+		}
 
 		public void RegisterEvents()
 		{
