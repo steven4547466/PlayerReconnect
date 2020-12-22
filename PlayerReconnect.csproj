@@ -92,6 +92,7 @@
     <Compile Include="Methods.cs" />
     <Compile Include="Patches\CharacterClassManagerPatches.cs" />
     <Compile Include="Patches\CustomNetworkManagerPatches.cs" />
+    <Compile Include="Patches\GhostModePatch.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconnectData.cs" />

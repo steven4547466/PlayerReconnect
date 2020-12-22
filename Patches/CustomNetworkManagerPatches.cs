@@ -10,7 +10,7 @@ using MEC;
 
 namespace PlayerReconnect.Patches
 {
-	[HarmonyPatch(typeof(CustomNetworkManager), nameof(CustomNetworkManager.OnServerDisconnect), new[] { typeof(NetworkConnection) })]
+	[HarmonyPatch(typeof(CustomNetworkManager), nameof(CustomNetworkManager.OnServerDisconnect), new[] { typeof(NetworkConnection) }), HarmonyPriority(Priority.First)]
 	class CustomNetworkManagerOnServerDisconnectPatch
 	{
 		public static bool Prefix(CustomNetworkManager __instance, NetworkConnection conn)

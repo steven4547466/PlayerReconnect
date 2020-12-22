@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events;
 using HarmonyLib;
+using MEC;
 
 namespace PlayerReconnect
 {
@@ -30,13 +32,20 @@ namespace PlayerReconnect
 		{
 			base.OnEnabled();
 			Instance = this;
-			Events.DisabledPatchesHashSet.Add(typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect)));
-			Events.DisabledPatchesHashSet.Add(typeof(CharacterClassManager).GetMethod(nameof(CharacterClassManager.NetworkIsVerified)));
-			Events.Instance.ReloadDisabledPatches();
-			RegisterEvents();
+			Timing.CallDelayed(2f, () =>
+			{
+				MethodBase disconnectMethod = typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect));
+				MethodBase joinMethod = typeof(CharacterClassManager).GetMethod(nameof(CharacterClassManager.NetworkIsVerified));
+				MethodBase ghostModeMethod = typeof(PlayerPositionManager).GetMethod(nameof(PlayerPositionManager.TransmitData));
+				if (disconnectMethod != null && !Events.DisabledPatchesHashSet.Contains(disconnectMethod)) Events.DisabledPatchesHashSet.Add(disconnectMethod);
+				if (joinMethod != null && !Events.DisabledPatchesHashSet.Contains(joinMethod)) Events.DisabledPatchesHashSet.Add(joinMethod);
+				if (ghostModeMethod != null && !Events.DisabledPatchesHashSet.Contains(ghostModeMethod)) Events.DisabledPatchesHashSet.Add(ghostModeMethod);
+				Events.Instance.ReloadDisabledPatches();
+				RegisterEvents();
 
-			HarmonyInstance = new Harmony($"steven4547466.playerreconnect-{++harmonyPatches}");
-			HarmonyInstance.PatchAll();
+				HarmonyInstance = new Harmony($"steven4547466.playerreconnect-{++harmonyPatches}");
+				HarmonyInstance.PatchAll();
+			});
 		}
 
 		public override void OnDisabled()
@@ -57,6 +66,7 @@ namespace PlayerReconnect
 
 		public void UnregisterEvents()
 		{
+			TrackingAndMethods.DisconnectedPlayers.Clear();
 			Exiled.Events.Handlers.Player.Hurting -= player.OnHurting;
 			Exiled.Events.Handlers.Server.RestartingRound -= server.OnRestartingRound;
 			player = null;

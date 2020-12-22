@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace PlayerReconnect.Patches
 {
-	[HarmonyPatch(typeof(CharacterClassManager), nameof(CharacterClassManager.NetworkIsVerified), MethodType.Setter)]
+	[HarmonyPatch(typeof(CharacterClassManager), nameof(CharacterClassManager.NetworkIsVerified), MethodType.Setter), HarmonyPriority(Priority.First)]
 	class Joined
 	{
 		public static void Prefix(CharacterClassManager __instance, bool value)
