@@ -8,7 +8,6 @@ using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events;
 using HarmonyLib;
-using MEC;
 
 namespace PlayerReconnect
 {
@@ -32,20 +31,17 @@ namespace PlayerReconnect
 		{
 			base.OnEnabled();
 			Instance = this;
-			Timing.CallDelayed(2f, () =>
-			{
-				MethodBase disconnectMethod = typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect));
-				MethodBase joinMethod = typeof(CharacterClassManager).GetMethod(nameof(CharacterClassManager.NetworkIsVerified));
-				MethodBase ghostModeMethod = typeof(PlayerPositionManager).GetMethod(nameof(PlayerPositionManager.TransmitData));
-				if (disconnectMethod != null && !Events.DisabledPatchesHashSet.Contains(disconnectMethod)) Events.DisabledPatchesHashSet.Add(disconnectMethod);
-				if (joinMethod != null && !Events.DisabledPatchesHashSet.Contains(joinMethod)) Events.DisabledPatchesHashSet.Add(joinMethod);
-				if (ghostModeMethod != null && !Events.DisabledPatchesHashSet.Contains(ghostModeMethod)) Events.DisabledPatchesHashSet.Add(ghostModeMethod);
-				Events.Instance.ReloadDisabledPatches();
-				RegisterEvents();
+			MethodBase disconnectMethod = typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect));
+			MethodBase joinMethod = typeof(CharacterClassManager).GetProperty(nameof(CharacterClassManager.NetworkIsVerified)).GetSetMethod();
+			MethodBase ghostMethod = typeof(PlayerPositionManager).GetMethod(nameof(PlayerPositionManager.TransmitData), BindingFlags.Instance | BindingFlags.NonPublic);
+			if (disconnectMethod != null) Events.DisabledPatchesHashSet.Add(disconnectMethod);
+			if (joinMethod != null) Events.DisabledPatchesHashSet.Add(joinMethod);
+			if (ghostMethod != null) Events.DisabledPatchesHashSet.Add(ghostMethod);
+			Events.Instance.ReloadDisabledPatches();
+			RegisterEvents();
 
-				HarmonyInstance = new Harmony($"steven4547466.playerreconnect-{++harmonyPatches}");
-				HarmonyInstance.PatchAll();
-			});
+			HarmonyInstance = new Harmony($"steven4547466.playerreconnect-{++harmonyPatches}");
+			HarmonyInstance.PatchAll();
 		}
 
 		public override void OnDisabled()

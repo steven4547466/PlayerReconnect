@@ -11,12 +11,15 @@ namespace PlayerReconnect.Patches
 	[HarmonyPatch(typeof(CharacterClassManager), nameof(CharacterClassManager.NetworkIsVerified), MethodType.Setter), HarmonyPriority(Priority.First)]
 	class Joined
 	{
-		public static void Prefix(CharacterClassManager __instance, bool value)
+		public static bool Prefix(CharacterClassManager __instance, bool value)
 		{
 			try
 			{
 				if (!value || (string.IsNullOrEmpty(__instance.UserId) && CharacterClassManager.OnlineMode))
-					return;
+				{
+					SetSyncVar(__instance, value);
+					return false;
+				}
 
 				if (!Exiled.API.Features.Player.Dictionary.TryGetValue(__instance.gameObject, out Exiled.API.Features.Player player))
 				{
@@ -56,17 +59,32 @@ namespace PlayerReconnect.Patches
 						TrackingAndMethods.Coroutines.Remove(player.UserId);
 					}
 					TrackingAndMethods.RespawnPlayer(player);
-					if (willRespawn) return;
+					if (willRespawn)
+					{
+						SetSyncVar(__instance, value);
+						return false;
+					}
 				}
 
 				var ev = new JoinedEventArgs(Exiled.API.Features.Player.Get(__instance.gameObject));
 
 				Player.OnJoined(ev);
+
+				SetSyncVar(__instance, value);
+				return false;
 			}
 			catch (Exception exception)
 			{
 				Exiled.API.Features.Log.Error($"{typeof(Joined).FullName}:\n{exception}");
+
+				SetSyncVar(__instance, value);
+				return false;
 			}
+		}
+
+		private static void SetSyncVar(CharacterClassManager __instance, bool value)
+		{
+			__instance.SetSyncVar<bool>(value, ref __instance.IsVerified, 512UL);
 		}
 	}
 }
