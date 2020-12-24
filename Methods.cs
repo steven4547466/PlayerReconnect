@@ -25,10 +25,8 @@ namespace PlayerReconnect
 				DisconnectedPlayers.Remove(player.UserId);
 				return;
 			}
-			Log.Info("Respawned");
 			Timing.CallDelayed(0.5f, () =>
 			{
-				Log.Info("Spawning as " + savedPlayer.Role);
 				player.SetRole(savedPlayer.Role);
 				Timing.CallDelayed(1f, () =>
 				{

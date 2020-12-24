@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PlayerReconnect</RootNamespace>
-    <AssemblyName>PlayerReconnect-1.0.0-pre003</AssemblyName>
+    <AssemblyName>PlayerReconnect-1.0.0-pre004</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -90,7 +90,7 @@
     <Compile Include="Handlers\Player.cs" />
     <Compile Include="Handlers\Server.cs" />
     <Compile Include="Methods.cs" />
-    <Compile Include="Patches\CharacterClassManagerPatches.cs" />
+    <Compile Include="Patches\ServerRolesPatches.cs" />
     <Compile Include="Patches\CustomNetworkManagerPatches.cs" />
     <Compile Include="Patches\GhostModePatch.cs" />
     <Compile Include="Plugin.cs" />

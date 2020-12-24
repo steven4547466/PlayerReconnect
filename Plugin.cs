@@ -18,7 +18,7 @@ namespace PlayerReconnect
 		public override string Name { get; } = "PlayerReconnect";
 		public override string Author { get; } = "Steven4547466";
 		public override Version Version { get; } = new Version(1, 0, 0);
-		public override Version RequiredExiledVersion { get; } = new Version(2, 1, 19);
+		public override Version RequiredExiledVersion { get; } = new Version(2, 1, 21);
 		public override string Prefix { get; } = "PlayerReconnect";
 
 		public Handlers.Player player { get; set; }
@@ -31,12 +31,10 @@ namespace PlayerReconnect
 		{
 			base.OnEnabled();
 			Instance = this;
-			MethodBase disconnectMethod = typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect));
-			MethodBase joinMethod = typeof(CharacterClassManager).GetProperty(nameof(CharacterClassManager.NetworkIsVerified)).GetSetMethod();
-			MethodBase ghostMethod = typeof(PlayerPositionManager).GetMethod(nameof(PlayerPositionManager.TransmitData), BindingFlags.Instance | BindingFlags.NonPublic);
-			if (disconnectMethod != null) Events.DisabledPatchesHashSet.Add(disconnectMethod);
-			if (joinMethod != null) Events.DisabledPatchesHashSet.Add(joinMethod);
-			if (ghostMethod != null) Events.DisabledPatchesHashSet.Add(ghostMethod);
+			Events.DisabledPatchesHashSet.Add(typeof(CustomNetworkManager).GetMethod(nameof(CustomNetworkManager.OnServerDisconnect)));
+			Events.DisabledPatchesHashSet.Add(typeof(CharacterClassManager).GetProperty(nameof(CharacterClassManager.NetworkIsVerified)).GetSetMethod());
+			Events.DisabledPatchesHashSet.Add(typeof(ServerRoles).GetMethod(nameof(ServerRoles.CallCmdServerSignatureComplete)));
+			Events.DisabledPatchesHashSet.Add(typeof(PlayerPositionManager).GetMethod(nameof(PlayerPositionManager.TransmitData), BindingFlags.Instance | BindingFlags.NonPublic));
 			Events.Instance.ReloadDisabledPatches();
 			RegisterEvents();
 
